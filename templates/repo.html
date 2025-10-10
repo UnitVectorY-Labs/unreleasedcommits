@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Name}} - Unreleased Commits</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <a href="index.html"><h1>Unreleased Commits</h1></a>
+    </header>
+    <main class="container">
+            <h2>{{.Name}}</h2>
+            <p>
+                <a href="{{.RepositoryURL}}" target="_blank" class="github-link">View on GitHub</a> |
+                <a href="index.html" class="github-link">← Back to Overview</a>
+            </p>
+            
+            <div class="repo-info">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">Default Branch:</span>
+                        <span class="value">{{.DefaultBranch}}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Latest Release:</span>
+                        <span class="value">{{.LatestReleaseTag}}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Release Date:</span>
+                        <span class="value">{{.LatestReleaseTime.Format "January 2, 2006"}}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Unreleased Commits:</span>
+                        <span class="value">{{len .UnreleasedCommits}}</span>
+                    </div>
+                </div>
+            </div>
+
+            {{if .UnreleasedCommits}}
+            <h2>Unreleased Commits</h2>
+            <div class="commits-list">
+                {{range .UnreleasedCommits}}
+                <div class="commit-card">
+                    <div class="commit-header">
+                        <a href="{{.URL}}" target="_blank" class="commit-sha">{{.SHA}}</a>
+                        <span class="commit-author">{{.Author}}</span>
+                        <span class="commit-date">{{.Timestamp.Format "Jan 2, 2006 15:04"}}</span>
+                    </div>
+                    <div class="commit-message">{{.Message}}</div>
+                </div>
+                {{end}}
+            </div>
+            {{else}}
+            <div class="no-commits">
+                <p>🎉 No unreleased commits! The {{.DefaultBranch}} branch is up to date with the latest release.</p>
+            </div>
+            {{end}}
+    </main>
+    <footer>
+        <p>
+            <a href="https://github.com/UnitVectorY-Labs">UnitVectorY Labs</a> | 
+            <a href="https://opensource.org/licenses/MIT">MIT License</a> | 
+            <a href="https://github.com/UnitVectorY-Labs/unreleasedcommits"><strong>unreleasedcommits</strong> on GitHub</a>
+        </p>
+    </footer>
+
+</body>
+</html>

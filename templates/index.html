@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unreleased Commits - UnitVectorY Labs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <a href="index.html"><h1>Unreleased Commits</h1></a>
+    </header>
+    <main class="container">
+            <h2>Overview</h2>
+            <p>Tracking commits ahead of latest releases for UnitVectorY Labs repositories.</p>
+            
+            <div class="summary-stats">
+                <div class="stat-card">
+                    <div class="stat-number">{{.TotalRepos}}</div>
+                    <div class="stat-label">Repositories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{.TotalCommits}}</div>
+                    <div class="stat-label">Unreleased Commits</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{.ReposWithCommits}}</div>
+                    <div class="stat-label">Repos with Changes</div>
+                </div>
+            </div>
+
+            <h2>Repositories</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Repository</th>
+                        <th>Latest Release</th>
+                        <th>Unreleased Commits</th>
+                        <th>Days Behind</th>
+                        <th>Days Since Release</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Repos}}
+                    <tr class="{{if gt .CommitCount 0}}has-commits{{end}}">
+                        <td>
+                            <a href="{{.Name}}.html" class="repo-link">{{.Name}}</a>
+                        </td>
+                        <td>{{.LatestRelease}}</td>
+                        <td class="commit-count">{{.CommitCount}}</td>
+                        <td>{{.DaysBehind}}</td>
+                        <td>{{.DaysSinceRelease}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+    </main>
+    <footer>
+        <p>
+            <a href="https://github.com/UnitVectorY-Labs">UnitVectorY Labs</a> | 
+            <a href="https://opensource.org/licenses/MIT">MIT License</a> | 
+            <a href="https://github.com/UnitVectorY-Labs/unreleasedcommits"><strong>unreleasedcommits</strong> on GitHub</a>
+        </p>
+    </footer>
+
+</body>
+</html>
