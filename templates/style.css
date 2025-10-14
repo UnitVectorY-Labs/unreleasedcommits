@@ -30,7 +30,10 @@ header a h1 {
     flex: 1;
     padding: 2rem;
     background-color: #f9fafb;
+    max-width: 1400px;
+    margin: 0 auto;
     width: 100%;
+    box-sizing: border-box;
 }
 
 h2 {
@@ -102,6 +105,9 @@ table {
     border-collapse: collapse;
     background-color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    table-layout: auto;
+    overflow-x: auto;
+    display: table;
 }
 
 th,
@@ -121,11 +127,11 @@ tr:hover {
 }
 
 tr.has-commits {
-    background-color: #fef3c7;
+    background-color: transparent;
 }
 
 tr.has-commits:hover {
-    background-color: #fde68a;
+    background-color: transparent;
 }
 
 .repo-link {
@@ -138,9 +144,10 @@ tr.has-commits:hover {
     text-decoration: underline;
 }
 
-.commit-count {
+.metric-cell {
     font-weight: bold;
-    color: #ea580c;
+    text-align: center;
+    transition: background-color 0.3s ease;
 }
 
 .repo-info {

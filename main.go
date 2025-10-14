@@ -38,12 +38,18 @@ type RepositoryData struct {
 
 // SummaryData represents summary info for the index page
 type SummaryData struct {
-	Name             string
-	CommitCount      int
-	DaysBehind       int
-	DaysSinceRelease int
-	LatestRelease    string
-	URL              string
+	Name                 string
+	CommitCount          int
+	DaysBehind           int
+	DaysSinceRelease     int
+	LatestRelease        string
+	URL                  string
+	CommitCountBgColor   string
+	CommitCountTextColor string
+	DaysBehindBgColor    string
+	DaysBehindTextColor  string
+	DaysSinceBgColor     string
+	DaysSinceTextColor   string
 }
 
 func main() {

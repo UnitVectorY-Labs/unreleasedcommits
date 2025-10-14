@@ -3,10 +3,45 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"math"
 	"os"
 	"path/filepath"
 	"time"
 )
+
+// interpolateColor blends between two RGB colors based on factor (0-1)
+func interpolateColor(r1, g1, b1, r2, g2, b2 int, factor float64) (int, int, int) {
+	r := int(math.Round(float64(r1) + factor*float64(r2-r1)))
+	g := int(math.Round(float64(g1) + factor*float64(g2-g1)))
+	b := int(math.Round(float64(b1) + factor*float64(b2-b1)))
+	return r, g, b
+}
+
+// getColorForValue returns a hex color from green to yellow to red based on normalized value (0-1)
+func getColorForValue(normalizedValue float64) string {
+	// Green RGB: 16, 185, 129
+	// Yellow RGB: 251, 191, 36
+	// Red RGB: 239, 68, 68
+
+	var r, g, b int
+	if normalizedValue < 0.5 {
+		// Green to Yellow
+		r, g, b = interpolateColor(16, 185, 129, 251, 191, 36, normalizedValue*2)
+	} else {
+		// Yellow to Red
+		r, g, b = interpolateColor(251, 191, 36, 239, 68, 68, (normalizedValue-0.5)*2)
+	}
+
+	return fmt.Sprintf("#%02x%02x%02x", r, g, b)
+}
+
+// getTextColor returns white or black text color based on background brightness
+func getTextColor(normalizedValue float64) string {
+	if normalizedValue > 0.6 {
+		return "#ffffff"
+	}
+	return "#000000"
+}
 
 func generateIndexPage(outputDir string, repos []RepositoryData) error {
 	tmpl, err := template.ParseFiles("templates/index.html")
@@ -17,6 +52,14 @@ func generateIndexPage(outputDir string, repos []RepositoryData) error {
 	var summaries []SummaryData
 	totalCommits := 0
 	reposWithCommits := 0
+
+	// Track min/max values for color scaling
+	minCommits := -1
+	maxCommits := 0
+	minDaysBehind := -1
+	maxDaysBehind := 0
+	minDaysSinceRelease := -1
+	maxDaysSinceRelease := 0
 
 	for _, repo := range repos {
 		commitCount := len(repo.UnreleasedCommits)
@@ -38,6 +81,28 @@ func generateIndexPage(outputDir string, repos []RepositoryData) error {
 			daysSinceRelease = int(time.Since(repo.LatestReleaseTime).Hours() / 24)
 		}
 
+		// Update min/max values
+		if minCommits == -1 || commitCount < minCommits {
+			minCommits = commitCount
+		}
+		if commitCount > maxCommits {
+			maxCommits = commitCount
+		}
+
+		if minDaysBehind == -1 || daysBehind < minDaysBehind {
+			minDaysBehind = daysBehind
+		}
+		if daysBehind > maxDaysBehind {
+			maxDaysBehind = daysBehind
+		}
+
+		if minDaysSinceRelease == -1 || daysSinceRelease < minDaysSinceRelease {
+			minDaysSinceRelease = daysSinceRelease
+		}
+		if daysSinceRelease > maxDaysSinceRelease {
+			maxDaysSinceRelease = daysSinceRelease
+		}
+
 		summaries = append(summaries, SummaryData{
 			Name:             repo.Name,
 			CommitCount:      commitCount,
@@ -48,6 +113,53 @@ func generateIndexPage(outputDir string, repos []RepositoryData) error {
 		})
 	}
 
+	// Set defaults if no data
+	if minCommits == -1 {
+		minCommits = 0
+	}
+	if minDaysBehind == -1 {
+		minDaysBehind = 0
+	}
+	if minDaysSinceRelease == -1 {
+		minDaysSinceRelease = 0
+	}
+
+	// Compute colors for each summary
+	for i := range summaries {
+		// Compute commit count color
+		commitRange := maxCommits - minCommits
+		if commitRange > 0 {
+			normalized := float64(summaries[i].CommitCount-minCommits) / float64(commitRange)
+			summaries[i].CommitCountBgColor = getColorForValue(normalized)
+			summaries[i].CommitCountTextColor = getTextColor(normalized)
+		} else {
+			summaries[i].CommitCountBgColor = getColorForValue(0)
+			summaries[i].CommitCountTextColor = getTextColor(0)
+		}
+
+		// Compute days behind color
+		daysBehindRange := maxDaysBehind - minDaysBehind
+		if daysBehindRange > 0 {
+			normalized := float64(summaries[i].DaysBehind-minDaysBehind) / float64(daysBehindRange)
+			summaries[i].DaysBehindBgColor = getColorForValue(normalized)
+			summaries[i].DaysBehindTextColor = getTextColor(normalized)
+		} else {
+			summaries[i].DaysBehindBgColor = getColorForValue(0)
+			summaries[i].DaysBehindTextColor = getTextColor(0)
+		}
+
+		// Compute days since release color
+		daysSinceRange := maxDaysSinceRelease - minDaysSinceRelease
+		if daysSinceRange > 0 {
+			normalized := float64(summaries[i].DaysSinceRelease-minDaysSinceRelease) / float64(daysSinceRange)
+			summaries[i].DaysSinceBgColor = getColorForValue(normalized)
+			summaries[i].DaysSinceTextColor = getTextColor(normalized)
+		} else {
+			summaries[i].DaysSinceBgColor = getColorForValue(0)
+			summaries[i].DaysSinceTextColor = getTextColor(0)
+		}
+	}
+
 	file, err := os.Create(filepath.Join(outputDir, "index.html"))
 	if err != nil {
 		return err
@@ -55,15 +167,27 @@ func generateIndexPage(outputDir string, repos []RepositoryData) error {
 	defer file.Close()
 
 	data := struct {
-		TotalRepos       int
-		TotalCommits     int
-		ReposWithCommits int
-		Repos            []SummaryData
+		TotalRepos          int
+		TotalCommits        int
+		ReposWithCommits    int
+		Repos               []SummaryData
+		MinCommits          int
+		MaxCommits          int
+		MinDaysBehind       int
+		MaxDaysBehind       int
+		MinDaysSinceRelease int
+		MaxDaysSinceRelease int
 	}{
-		TotalRepos:       len(repos),
-		TotalCommits:     totalCommits,
-		ReposWithCommits: reposWithCommits,
-		Repos:            summaries,
+		TotalRepos:          len(repos),
+		TotalCommits:        totalCommits,
+		ReposWithCommits:    reposWithCommits,
+		Repos:               summaries,
+		MinCommits:          minCommits,
+		MaxCommits:          maxCommits,
+		MinDaysBehind:       minDaysBehind,
+		MaxDaysBehind:       maxDaysBehind,
+		MinDaysSinceRelease: minDaysSinceRelease,
+		MaxDaysSinceRelease: maxDaysSinceRelease,
 	}
 
 	return tmpl.Execute(file, data)
