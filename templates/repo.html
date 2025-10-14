@@ -8,24 +8,22 @@
 </head>
 <body>
     <header>
-        <a href="index.html"><h1>Unreleased Commits</h1></a>
+        <a href="index.html"><h1>Unreleased Commits - {{.Owner}}</h1></a>
     </header>
     <main class="container">
-            <h2>{{.Name}}</h2>
-            <p>
-                <a href="{{.RepositoryURL}}" target="_blank" class="github-link">View on GitHub</a> |
-                <a href="index.html" class="github-link">← Back to Overview</a>
-            </p>
-            
             <div class="repo-info">
                 <div class="info-grid">
                     <div class="info-item">
+                        <span class="label">Repository:</span>
+                        <span class="value"><a href="{{.RepositoryURL}}" target="_blank" class="github-link">{{.Name}}</a></span>
+                    </div>
+                    <div class="info-item">
                         <span class="label">Default Branch:</span>
-                        <span class="value">{{.DefaultBranch}}</span>
+                        <span class="value"><a href="{{.RepositoryURL}}/tree/{{.DefaultBranch}}" target="_blank" class="github-link">{{.DefaultBranch}}</a></span>
                     </div>
                     <div class="info-item">
                         <span class="label">Latest Release:</span>
-                        <span class="value">{{.LatestReleaseTag}}</span>
+                        <span class="value"><a href="{{.RepositoryURL}}/releases/tag/{{.LatestReleaseTag}}" target="_blank" class="github-link">{{.LatestReleaseTag}}</a></span>
                     </div>
                     <div class="info-item">
                         <span class="label">Release Date:</span>
@@ -34,6 +32,14 @@
                     <div class="info-item">
                         <span class="label">Unreleased Commits:</span>
                         <span class="value">{{len .UnreleasedCommits}}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Days Behind:</span>
+                        <span class="value">{{.DaysBehind}}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Days Since Release:</span>
+                        <span class="value">{{.DaysSinceRelease}}</span>
                     </div>
                 </div>
             </div>

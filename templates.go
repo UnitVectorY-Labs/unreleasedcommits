@@ -166,7 +166,14 @@ func generateIndexPage(outputDir string, repos []RepositoryData) error {
 	}
 	defer file.Close()
 
+	// Extract owner from the first repository (all repos have the same owner)
+	owner := ""
+	if len(repos) > 0 {
+		owner = repos[0].Owner
+	}
+
 	data := struct {
+		Owner               string
 		TotalRepos          int
 		TotalCommits        int
 		ReposWithCommits    int
@@ -178,6 +185,7 @@ func generateIndexPage(outputDir string, repos []RepositoryData) error {
 		MinDaysSinceRelease int
 		MaxDaysSinceRelease int
 	}{
+		Owner:               owner,
 		TotalRepos:          len(repos),
 		TotalCommits:        totalCommits,
 		ReposWithCommits:    reposWithCommits,
@@ -206,7 +214,32 @@ func generateRepoPage(outputDir string, repo RepositoryData) error {
 	}
 	defer file.Close()
 
-	return tmpl.Execute(file, repo)
+	// Calculate DaysBehind and DaysSinceRelease
+	daysBehind := 0
+	commitCount := len(repo.UnreleasedCommits)
+	if commitCount > 0 && !repo.LatestReleaseTime.IsZero() {
+		// Since commits are ordered with newest first (reversed in main.go)
+		latestCommitTime := repo.UnreleasedCommits[0].Timestamp
+		daysBehind = int(latestCommitTime.Sub(repo.LatestReleaseTime).Hours() / 24)
+	}
+
+	daysSinceRelease := 0
+	if !repo.LatestReleaseTime.IsZero() {
+		daysSinceRelease = int(time.Since(repo.LatestReleaseTime).Hours() / 24)
+	}
+
+	// Create a data struct with the calculated fields
+	data := struct {
+		RepositoryData
+		DaysBehind       int
+		DaysSinceRelease int
+	}{
+		RepositoryData:   repo,
+		DaysBehind:       daysBehind,
+		DaysSinceRelease: daysSinceRelease,
+	}
+
+	return tmpl.Execute(file, data)
 }
 
 func generateCSS(outputDir string) error {

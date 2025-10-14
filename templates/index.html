@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unreleased Commits - UnitVectorY Labs</title>
+    <title>{{.Owner}} - Unreleased Commits</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <a href="index.html"><h1>Unreleased Commits</h1></a>
+        <a href="index.html"><h1>Unreleased Commits - {{.Owner}}</h1></a>
     </header>
     <main class="container">
-            <h2>Overview</h2>
-            <p>Tracking commits ahead of latest releases for UnitVectorY Labs repositories.</p>
-            
             <div class="summary-stats">
                 <div class="stat-card">
                     <div class="stat-number">{{.TotalRepos}}</div>
