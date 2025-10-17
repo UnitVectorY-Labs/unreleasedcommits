@@ -1,6 +1,6 @@
 module github.com/UnitVectorY-Labs/unreleasedcommits
 
-go 1.25.2 // GOVERSION
+go 1.25.3 // GOVERSION
 
 require (
 	github.com/google/go-github/v62 v62.0.0
