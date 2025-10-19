@@ -43,7 +43,7 @@ func getTextColor(normalizedValue float64) string {
 	return "#000000"
 }
 
-func generateIndexPage(outputDir string, repos []RepositoryData) error {
+func generateIndexPage(outputDir string, repos []RepositoryData, lastUpdated string) error {
 	tmpl, err := template.ParseFiles("templates/index.html")
 	if err != nil {
 		return fmt.Errorf("failed to parse index template: %w", err)
@@ -184,6 +184,7 @@ func generateIndexPage(outputDir string, repos []RepositoryData) error {
 		MaxDaysBehind       int
 		MinDaysSinceRelease int
 		MaxDaysSinceRelease int
+		LastUpdated         string
 	}{
 		Owner:               owner,
 		TotalRepos:          len(repos),
@@ -196,12 +197,13 @@ func generateIndexPage(outputDir string, repos []RepositoryData) error {
 		MaxDaysBehind:       maxDaysBehind,
 		MinDaysSinceRelease: minDaysSinceRelease,
 		MaxDaysSinceRelease: maxDaysSinceRelease,
+		LastUpdated:         lastUpdated,
 	}
 
 	return tmpl.Execute(file, data)
 }
 
-func generateRepoPage(outputDir string, repo RepositoryData) error {
+func generateRepoPage(outputDir string, repo RepositoryData, lastUpdated string) error {
 	tmpl, err := template.ParseFiles("templates/repo.html")
 	if err != nil {
 		return fmt.Errorf("failed to parse repo template: %w", err)
@@ -233,10 +235,12 @@ func generateRepoPage(outputDir string, repo RepositoryData) error {
 		RepositoryData
 		DaysBehind       int
 		DaysSinceRelease int
+		LastUpdated      string
 	}{
 		RepositoryData:   repo,
 		DaysBehind:       daysBehind,
 		DaysSinceRelease: daysSinceRelease,
+		LastUpdated:      lastUpdated,
 	}
 
 	return tmpl.Execute(file, data)
