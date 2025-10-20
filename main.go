@@ -52,6 +52,11 @@ type SummaryData struct {
 	DaysSinceTextColor   string
 }
 
+// TimestampData captures when the crawl last ran
+type TimestampData struct {
+	LastCrawled time.Time `json:"last_crawled"`
+}
+
 func main() {
 	crawlMode := flag.Bool("crawl", false, "Crawl GitHub API and generate JSON files")
 	generateMode := flag.Bool("generate", false, "Generate HTML pages from JSON files")
@@ -175,6 +180,14 @@ func runCrawl(owner string, limit int) {
 		processedCount++
 	}
 
+	crawlTime := time.Now().UTC()
+	timestampFile := filepath.Join(outputDir, "timestamp.json")
+	if err := writeJSON(timestampFile, TimestampData{LastCrawled: crawlTime}); err != nil {
+		log.Printf("⚠️  Failed to write crawl timestamp: %v", err)
+	} else {
+		fmt.Printf("\n🕒 Recorded crawl timestamp: %s\n", crawlTime.Format(time.RFC3339))
+	}
+
 	fmt.Printf("\n🎉 Crawl complete! Processed %d repositories with releases.\n", processedCount)
 }
 
@@ -193,12 +206,22 @@ func runGenerate() {
 		log.Fatalf("Failed to read data directory: %v", err)
 	}
 
-	if len(files) == 0 {
-		log.Fatal("No JSON files found in data directory. Run with -crawl first.")
+	lastUpdated := ""
+	timestampPath := filepath.Join(dataDir, "timestamp.json")
+	if ts, err := loadLastCrawlTimestamp(timestampPath); err != nil {
+		if !os.IsNotExist(err) {
+			fmt.Printf("Warning: could not load crawl timestamp: %v\n", err)
+		}
+	} else {
+		lastUpdated = formatTimestampForFooter(ts)
 	}
 
 	var allRepos []RepositoryData
 	for _, file := range files {
+		if filepath.Base(file) == "timestamp.json" {
+			continue
+		}
+
 		var repo RepositoryData
 		data, err := os.ReadFile(file)
 		if err != nil {
@@ -214,16 +237,20 @@ func runGenerate() {
 		allRepos = append(allRepos, repo)
 	}
 
+	if len(allRepos) == 0 {
+		log.Fatal("No repository JSON files found in data directory. Run with -crawl first.")
+	}
+
 	sort.Slice(allRepos, func(i, j int) bool {
 		return allRepos[i].Name < allRepos[j].Name
 	})
 
-	if err := generateIndexPage(outputDir, allRepos); err != nil {
+	if err := generateIndexPage(outputDir, allRepos, lastUpdated); err != nil {
 		log.Fatalf("Failed to generate index page: %v", err)
 	}
 
 	for _, repo := range allRepos {
-		if err := generateRepoPage(outputDir, repo); err != nil {
+		if err := generateRepoPage(outputDir, repo, lastUpdated); err != nil {
 			fmt.Printf("Error generating page for %s: %v\n", repo.Name, err)
 		}
 	}
@@ -305,4 +332,25 @@ func writeJSON(filename string, data interface{}) error {
 	encoder := json.NewEncoder(file)
 	encoder.SetIndent("", "  ")
 	return encoder.Encode(data)
+}
+
+func loadLastCrawlTimestamp(filename string) (time.Time, error) {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	var ts TimestampData
+	if err := json.Unmarshal(data, &ts); err != nil {
+		return time.Time{}, err
+	}
+
+	return ts.LastCrawled.UTC(), nil
+}
+
+func formatTimestampForFooter(t time.Time) string {
+	if t.IsZero() {
+		return ""
+	}
+	return t.UTC().Format("January 2, 2006 15:04 UTC")
 }
