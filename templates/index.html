@@ -43,8 +43,8 @@
                         <td>
                             <a href="{{.Name}}.html" class="repo-link">{{.Name}}</a>
                         </td>
-                        <td>{{.LatestRelease}}</td>
-                        <td class="metric-cell" style="background-color: {{.CommitCountBgColor}}; color: {{.CommitCountTextColor}};">{{.CommitCount}}</td>
+                        <td><a href="{{.RepositoryURL}}/releases/tag/{{.LatestRelease}}" target="_blank" class="github-link">{{.LatestRelease}}</a></td>
+                        <td class="metric-cell" style="background-color: {{.CommitCountBgColor}}; color: {{.CommitCountTextColor}};">{{if gt .CommitCount 0}}<a href="{{.RepositoryURL}}/compare/{{.LatestRelease}}...{{.DefaultBranch}}" target="_blank" class="github-link" style="color: inherit;">{{.CommitCount}}</a>{{else}}{{.CommitCount}}{{end}}</td>
                         <td class="metric-cell" style="background-color: {{.DaysBehindBgColor}}; color: {{.DaysBehindTextColor}};">{{.DaysBehind}}</td>
                         <td class="metric-cell" style="background-color: {{.DaysSinceBgColor}}; color: {{.DaysSinceTextColor}};">{{.DaysSinceRelease}}</td>
                     </tr>

@@ -110,6 +110,8 @@ func generateIndexPage(outputDir string, repos []RepositoryData, lastUpdated str
 			DaysSinceRelease: daysSinceRelease,
 			LatestRelease:    repo.LatestReleaseTag,
 			URL:              fmt.Sprintf("%s.html", repo.Name),
+			RepositoryURL:    repo.RepositoryURL,
+			DefaultBranch:    repo.DefaultBranch,
 		})
 	}
 
