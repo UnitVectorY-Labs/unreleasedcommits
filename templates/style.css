@@ -139,7 +139,7 @@ tr.has-commits:hover {
 }
 
 .repo-link:hover {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .metric-cell {
@@ -182,7 +182,7 @@ tr.has-commits:hover {
 
 .github-link {
     color: #1e3a8a;
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .github-link:hover {

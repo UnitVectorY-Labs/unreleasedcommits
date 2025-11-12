@@ -44,6 +44,8 @@ type SummaryData struct {
 	DaysSinceRelease     int
 	LatestRelease        string
 	URL                  string
+	RepositoryURL        string
+	DefaultBranch        string
 	CommitCountBgColor   string
 	CommitCountTextColor string
 	DaysBehindBgColor    string

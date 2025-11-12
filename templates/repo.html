@@ -31,7 +31,7 @@
                     </div>
                     <div class="info-item">
                         <span class="label">Unreleased Commits:</span>
-                        <span class="value">{{len .UnreleasedCommits}}</span>
+                        <span class="value">{{if gt (len .UnreleasedCommits) 0}}<a href="{{.RepositoryURL}}/compare/{{.LatestReleaseTag}}...{{.DefaultBranch}}" target="_blank" class="github-link">{{len .UnreleasedCommits}}</a>{{else}}{{len .UnreleasedCommits}}{{end}}</span>
                     </div>
                     <div class="info-item">
                         <span class="label">Days Behind:</span>
