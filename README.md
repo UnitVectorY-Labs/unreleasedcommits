@@ -61,6 +61,17 @@ Creates static HTML pages from crawl JSON data:
 ./unreleasedcommits -generate
 ```
 
+#### Development Mode
+
+For development, you can override the embedded templates to load from disk instead. This allows live editing of templates and CSS without rebuilding the binary:
+
+```bash
+export TEMPLATE_PATH=./templates
+./unreleasedcommits -generate
+```
+
+When `TEMPLATE_PATH` is set, templates and the `style.css` file are loaded from the specified directory instead of the embedded filesystem that is part of the binary.
+
 ## Output Format
 
 ### JSON Output (from crawl)
@@ -104,7 +115,6 @@ Additionally, a `timestamp.json` file is created:
 ## Requirements
 
 - Latest version of Go
-- `templates/` directory with `index.html`, `repo.html`, and `style.css`
 - GitHub personal access token with repository read permissions
 - Standard library dependencies: `github.com/google/go-github/v62` and `golang.org/x/oauth2`
 

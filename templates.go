@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"io/fs"
 	"math"
 	"os"
 	"path/filepath"
@@ -44,7 +45,7 @@ func getTextColor(normalizedValue float64) string {
 }
 
 func generateIndexPage(outputDir string, repos []RepositoryData, lastUpdated string) error {
-	tmpl, err := template.ParseFiles("templates/index.html")
+	tmpl, err := loadTemplates()
 	if err != nil {
 		return fmt.Errorf("failed to parse index template: %w", err)
 	}
@@ -206,7 +207,7 @@ func generateIndexPage(outputDir string, repos []RepositoryData, lastUpdated str
 }
 
 func generateRepoPage(outputDir string, repo RepositoryData, lastUpdated string) error {
-	tmpl, err := template.ParseFiles("templates/repo.html")
+	tmpl, err := loadTemplates()
 	if err != nil {
 		return fmt.Errorf("failed to parse repo template: %w", err)
 	}
@@ -249,11 +250,39 @@ func generateRepoPage(outputDir string, repo RepositoryData, lastUpdated string)
 }
 
 func generateCSS(outputDir string) error {
-	cssContent, err := os.ReadFile("templates/style.css")
-	if err != nil {
-		return fmt.Errorf("failed to read CSS template: %w", err)
-	}
+	return copyEmbeddedFile(templateFS, "templates/style.css", filepath.Join(outputDir, "style.css"))
+}
 
-	filename := filepath.Join(outputDir, "style.css")
-	return os.WriteFile(filename, cssContent, 0644)
+// loadTemplates loads templates from the embedded filesystem,
+// or from disk if TEMPLATE_PATH environment variable is set (for development).
+func loadTemplates() (*template.Template, error) {
+	// Dev-time override: load from disk if TEMPLATE_PATH is set
+	if dir := os.Getenv("TEMPLATE_PATH"); dir != "" {
+		fmt.Printf("Loading templates from disk: %s\n", dir)
+		return template.New("").ParseGlob(filepath.Join(dir, "*.html"))
+	}
+	// Production: load from embedded filesystem
+	return template.New("").ParseFS(templateFS, "templates/*.html")
+}
+
+// copyEmbeddedFile copies a file from the embedded filesystem to the destination path.
+func copyEmbeddedFile(fsys fs.FS, src, dst string) error {
+	// Dev-time override: copy from disk if TEMPLATE_PATH is set
+	if dir := os.Getenv("TEMPLATE_PATH"); dir != "" {
+		// Extract filename from src path
+		filename := filepath.Base(src)
+		srcPath := filepath.Join(dir, filename)
+		fmt.Printf("Copying file from disk: %s\n", srcPath)
+		content, err := os.ReadFile(srcPath)
+		if err != nil {
+			return fmt.Errorf("failed to read file from disk: %w", err)
+		}
+		return os.WriteFile(dst, content, 0644)
+	}
+	// Production: read from embedded filesystem
+	content, err := fs.ReadFile(fsys, src)
+	if err != nil {
+		return fmt.Errorf("failed to read embedded file: %w", err)
+	}
+	return os.WriteFile(dst, content, 0644)
 }

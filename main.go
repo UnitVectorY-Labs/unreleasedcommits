@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"embed"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -15,6 +16,12 @@ import (
 	"github.com/google/go-github/v62/github"
 	"golang.org/x/oauth2"
 )
+
+// templateFS embeds all HTML templates from the templates directory.
+//
+//go:embed templates/*.html
+//go:embed templates/style.css
+var templateFS embed.FS
 
 // CommitInfo represents a single commit with all relevant details
 type CommitInfo struct {
