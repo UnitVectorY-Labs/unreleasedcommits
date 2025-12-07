@@ -203,7 +203,7 @@ func generateIndexPage(outputDir string, repos []RepositoryData, lastUpdated str
 		LastUpdated:         lastUpdated,
 	}
 
-	return tmpl.Execute(file, data)
+	return tmpl.ExecuteTemplate(file, "index.html", data)
 }
 
 func generateRepoPage(outputDir string, repo RepositoryData, lastUpdated string) error {
@@ -246,7 +246,7 @@ func generateRepoPage(outputDir string, repo RepositoryData, lastUpdated string)
 		LastUpdated:      lastUpdated,
 	}
 
-	return tmpl.Execute(file, data)
+	return tmpl.ExecuteTemplate(file, "repo.html", data)
 }
 
 func generateCSS(outputDir string) error {
@@ -259,10 +259,10 @@ func loadTemplates() (*template.Template, error) {
 	// Dev-time override: load from disk if TEMPLATE_PATH is set
 	if dir := os.Getenv("TEMPLATE_PATH"); dir != "" {
 		fmt.Printf("Loading templates from disk: %s\n", dir)
-		return template.New("").ParseGlob(filepath.Join(dir, "*.html"))
+		return template.ParseGlob(filepath.Join(dir, "*.html"))
 	}
 	// Production: load from embedded filesystem
-	return template.New("").ParseFS(templateFS, "templates/*.html")
+	return template.ParseFS(templateFS, "templates/*.html")
 }
 
 // copyEmbeddedFile copies a file from the embedded filesystem to the destination path.
