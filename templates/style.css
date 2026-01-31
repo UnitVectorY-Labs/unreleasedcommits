@@ -282,6 +282,43 @@ tr.has-commits:hover {
     margin: 0;
 }
 
+/* Merge commits collapsible styling */
+details.merge-commit {
+    border-left-color: #94a3b8;
+}
+
+details.merge-commit > summary {
+    cursor: pointer;
+    list-style: none;
+}
+
+details.merge-commit > summary::-webkit-details-marker {
+    display: none;
+}
+
+details.merge-commit > summary::before {
+    content: "▶";
+    display: inline-block;
+    margin-right: 0.5em;
+    font-size: 0.75em;
+    transition: transform 0.2s;
+    color: #64748b;
+}
+
+details.merge-commit[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+.merge-badge {
+    background: #94a3b8;
+    color: white;
+    padding: 0.15em 0.5em;
+    border-radius: 4px;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .container {
