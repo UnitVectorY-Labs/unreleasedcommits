@@ -30,6 +30,7 @@ type CommitInfo struct {
 	Message   string    `json:"message"`
 	Timestamp time.Time `json:"timestamp"`
 	URL       string    `json:"url"`
+	IsMerge   bool      `json:"is_merge"`
 }
 
 // RepositoryData represents all data for a repository
@@ -155,12 +156,16 @@ func runCrawl(owner string, limit int) {
 				author = c.Commit.Author.GetName()
 			}
 
+			// A merge commit has 2 or more parents
+			isMerge := len(c.Parents) >= 2
+
 			commitInfos = append(commitInfos, CommitInfo{
 				SHA:       c.GetSHA(),
 				Author:    author,
 				Message:   c.Commit.GetMessage(),
 				Timestamp: c.Commit.Author.GetDate().Time,
 				URL:       c.GetHTMLURL(),
+				IsMerge:   isMerge,
 			})
 		}
 

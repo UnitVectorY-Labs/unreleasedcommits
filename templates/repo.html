@@ -48,6 +48,17 @@
             <h2>Unreleased Commits</h2>
             <div class="commits-list">
                 {{range .UnreleasedCommits}}
+                {{if .IsMerge}}
+                <details class="commit-card merge-commit">
+                    <summary class="commit-header">
+                        <a href="{{.URL}}" target="_blank" class="commit-sha">{{.SHA}}</a>
+                        <span class="commit-author">{{.Author}}</span>
+                        <span class="commit-date">{{.Timestamp.Format "Jan 2, 2006 15:04"}}</span>
+                        <span class="merge-badge">merge</span>
+                    </summary>
+                    <div class="commit-message">{{.Message}}</div>
+                </details>
+                {{else}}
                 <div class="commit-card">
                     <div class="commit-header">
                         <a href="{{.URL}}" target="_blank" class="commit-sha">{{.SHA}}</a>
@@ -56,6 +67,7 @@
                     </div>
                     <div class="commit-message">{{.Message}}</div>
                 </div>
+                {{end}}
                 {{end}}
             </div>
             {{else}}
