@@ -336,7 +336,7 @@ func compareAllCommits(ctx context.Context, client *github.Client, owner, repo, 
 	return all, nil
 }
 
-func writeJSON(filename string, data interface{}) error {
+func writeJSON(filename string, data any) error {
 	file, err := os.Create(filename)
 	if err != nil {
 		return err
