@@ -290,7 +290,12 @@ func listPublicRepos(ctx context.Context, client *github.Client, owner string, l
 			return nil, err
 		}
 
-		allRepos = append(allRepos, repos...)
+		for _, repo := range repos {
+			if repo.GetArchived() {
+				continue
+			}
+			allRepos = append(allRepos, repo)
+		}
 
 		if limit > 0 && len(allRepos) >= limit {
 			return allRepos[:limit], nil
