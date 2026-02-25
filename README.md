@@ -122,6 +122,7 @@ Additionally, a `timestamp.json` file is created:
 
 The tool processes public repositories from the specified organization:
 
+- Skips archived repositories
 - Skips repositories without releases
 - Compares the default branch against the latest release tag
 - Captures all commits between the release and branch HEAD
