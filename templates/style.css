@@ -83,6 +83,12 @@ footer p {
     line-height: 1.4;
 }
 
+footer .last-updated {
+    margin-top: 0.35em;
+    font-size: 0.9em;
+    color: #6b7280;
+}
+
 footer a {
     color: #9ca3af;
     text-decoration: none;
@@ -102,10 +108,12 @@ footer a:hover {
 }
 
 .stat-card {
-    background: #f8f9fa;
+    background: white;
     padding: 1em;
     border-radius: 6px;
     text-align: center;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .stat-number {
@@ -121,11 +129,16 @@ footer a:hover {
 }
 
 /* Table */
+.table-wrapper {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
     background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     table-layout: auto;
     overflow-x: auto;
     display: table;
@@ -135,12 +148,13 @@ th,
 td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 th {
-    background-color: #f2f2f2;
+    background-color: #f8f9fa;
     font-weight: 600;
+    color: #374151;
 }
 
 tr:hover {
@@ -265,6 +279,9 @@ tr.has-commits:hover {
     color: #334155;
     white-space: pre-wrap;
     line-height: 1.5;
+    margin-top: 0.75em;
+    padding-top: 0.75em;
+    border-top: 1px solid #f1f5f9;
 }
 
 /* No-commits success box */
