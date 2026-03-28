@@ -1,0 +1,12 @@
+name: unreleasedcommits
+default_branch: main
+config:
+  description: "Generates reports that identify commits on the default branch which haven't yet been included in the latest GitHub release."
+  license: MIT
+  language: go
+  release: release-go
+  justfile: true
+  codecov: false
+  gitignore:
+    - data/
+    - output/
