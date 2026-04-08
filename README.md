@@ -1,8 +1,8 @@
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![Active](https://img.shields.io/badge/Status-Active-green)](https://guide.unitvectorylabs.com/bestpractices/status/#active) [![Go Report Card](https://goreportcard.com/badge/github.com/UnitVectorY-Labs/unreleasedcommits)](https://goreportcard.com/report/github.com/UnitVectorY-Labs/unreleasedcommits)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![Active](https://img.shields.io/badge/Status-Active-green)](https://guide.unitvectorylabs.com/bestpractices/status/#active) 
 
 # unreleasedcommits
 
-Generates reports that identify commits on the default branch which haven’t yet been included in the latest GitHub release.
+Generates reports that identify commits on the default branch which haven't yet been included in the latest GitHub release.
 
 ## Features
 
