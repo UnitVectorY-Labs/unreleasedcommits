@@ -255,8 +255,8 @@ func runGenerate() {
 		log.Fatal("No repository JSON files found in data directory. Run with -crawl first.")
 	}
 
-	sort.Slice(allRepos, func(i, j int) bool {
-		return allRepos[i].Name < allRepos[j].Name
+	sort.SliceStable(allRepos, func(i, j int) bool {
+		return strings.ToLower(allRepos[i].Name) < strings.ToLower(allRepos[j].Name)
 	})
 
 	if err := generateIndexPage(outputDir, allRepos, lastUpdated); err != nil {
