@@ -27,14 +27,14 @@
             </div>
 
             <h2>Repositories</h2>
-            <table>
+            <table data-sortable>
                 <thead>
                     <tr>
-                        <th>Repository</th>
-                        <th>Latest Release</th>
-                        <th>Unreleased Commits</th>
-                        <th>Days Behind</th>
-                        <th>Days Since Release</th>
+                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="text">Repository</button></th>
+                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="text">Latest Release</button></th>
+                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Unreleased Commits</button></th>
+                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Days Behind</button></th>
+                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Days Since Release</button></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,9 +44,9 @@
                             <a href="{{.Name}}.html" class="repo-link">{{.Name}}</a>
                         </td>
                         <td><a href="{{.RepositoryURL}}/releases/tag/{{.LatestRelease}}" target="_blank" class="github-link">{{.LatestRelease}}</a></td>
-                        <td class="metric-cell" style="background-color: {{.CommitCountBgColor}}; color: {{.CommitCountTextColor}};">{{if gt .CommitCount 0}}<a href="{{.RepositoryURL}}/compare/{{.LatestRelease}}...{{.DefaultBranch}}" target="_blank" class="github-link" style="color: inherit;">{{.CommitCount}}</a>{{else}}{{.CommitCount}}{{end}}</td>
-                        <td class="metric-cell" style="background-color: {{.DaysBehindBgColor}}; color: {{.DaysBehindTextColor}};">{{.DaysBehind}}</td>
-                        <td class="metric-cell" style="background-color: {{.DaysSinceBgColor}}; color: {{.DaysSinceTextColor}};">{{.DaysSinceRelease}}</td>
+                        <td class="metric-cell" data-sort-value="{{.CommitCount}}" style="background-color: {{.CommitCountBgColor}}; color: {{.CommitCountTextColor}};">{{if gt .CommitCount 0}}<a href="{{.RepositoryURL}}/compare/{{.LatestRelease}}...{{.DefaultBranch}}" target="_blank" class="github-link" style="color: inherit;">{{.CommitCount}}</a>{{else}}{{.CommitCount}}{{end}}</td>
+                        <td class="metric-cell" data-sort-value="{{.DaysBehind}}" style="background-color: {{.DaysBehindBgColor}}; color: {{.DaysBehindTextColor}};">{{.DaysBehind}}</td>
+                        <td class="metric-cell" data-sort-value="{{.DaysSinceRelease}}" style="background-color: {{.DaysSinceBgColor}}; color: {{.DaysSinceTextColor}};">{{.DaysSinceRelease}}</td>
                     </tr>
                     {{end}}
                 </tbody>
@@ -63,5 +63,62 @@
         {{end}}
     </footer>
 
+    <script>
+        (() => {
+            const table = document.querySelector('[data-sortable]');
+            if (!table || !table.tBodies.length) return;
+
+            const tbody = table.tBodies[0];
+            const headers = Array.from(table.tHead.rows[0].cells);
+            const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
+            Array.from(tbody.rows).forEach((row, index) => {
+                row.dataset.originalIndex = index;
+            });
+
+            headers.forEach((header) => {
+                const button = header.querySelector('.sort-button');
+                if (!button) return;
+
+                button.addEventListener('click', () => {
+                    const column = header.cellIndex;
+                    const currentDirection = header.getAttribute('aria-sort');
+                    const direction = currentDirection === 'none'
+                        ? (button.dataset.sortType === 'number' ? 'descending' : 'ascending')
+                        : (currentDirection === 'ascending' ? 'descending' : 'ascending');
+                    const multiplier = direction === 'ascending' ? 1 : -1;
+                    const rows = Array.from(tbody.rows);
+
+                    rows.sort((leftRow, rightRow) => {
+                        const leftCell = leftRow.cells[column];
+                        const rightCell = rightRow.cells[column];
+                        const leftValue = leftCell.dataset.sortValue ?? leftCell.textContent.trim();
+                        const rightValue = rightCell.dataset.sortValue ?? rightCell.textContent.trim();
+                        let comparison;
+
+                        if (button.dataset.sortType === 'number') {
+                            comparison = Number(leftValue) - Number(rightValue);
+                        } else {
+                            comparison = collator.compare(leftValue, rightValue);
+                        }
+
+                        if (comparison === 0) {
+                            return Number(leftRow.dataset.originalIndex) - Number(rightRow.dataset.originalIndex);
+                        }
+                        return comparison * multiplier;
+                    });
+
+                    headers.forEach((otherHeader) => {
+                        otherHeader.setAttribute('aria-sort', 'none');
+                        const otherButton = otherHeader.querySelector('.sort-button');
+                        if (otherButton) delete otherButton.dataset.direction;
+                    });
+                    header.setAttribute('aria-sort', direction);
+                    button.dataset.direction = direction;
+                    tbody.append(...rows);
+                });
+            });
+        })();
+    </script>
 </body>
 </html>
