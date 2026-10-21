@@ -233,6 +233,7 @@ tr.has-commits:hover {
 .value {
     color: #334155;
     font-size: 1em;
+    overflow-wrap: anywhere;
 }
 
 .github-link {
@@ -275,6 +276,8 @@ tr.has-commits:hover {
     border-radius: 4px;
     text-decoration: none;
     font-size: 0.85em;
+    overflow-wrap: anywhere;
+    max-width: 100%;
 }
 
 .commit-sha:hover {
@@ -295,6 +298,7 @@ tr.has-commits:hover {
     color: #334155;
     white-space: pre-wrap;
     line-height: 1.5;
+    overflow-wrap: anywhere;
 }
 
 /* No-commits success box */
@@ -355,8 +359,50 @@ details.merge-commit[open] > summary::before {
         padding: 1rem;
     }
     
+    /* Stack the repository table into cards so it never scrolls horizontally */
     table {
-        font-size: 0.9em;
+        display: block;
+        box-shadow: none;
+        background-color: transparent;
+    }
+
+    thead {
+        display: none;
+    }
+
+    tbody tr {
+        display: block;
+        background-color: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        margin-bottom: 1em;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    tbody tr.has-commits,
+    tbody tr:hover {
+        background-color: white;
+    }
+
+    tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1em;
+        border-bottom: 1px solid #eee;
+        text-align: right;
+    }
+
+    tbody td:last-child {
+        border-bottom: none;
+    }
+
+    tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        text-align: left;
+        flex-shrink: 0;
     }
     
     .commit-header {
