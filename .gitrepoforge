@@ -1,6 +1,7 @@
 name: unreleasedcommits
 default_branch: main
 config:
+  osv: sarif
   description: "Generates reports that identify commits on the default branch which haven't yet been included in the latest GitHub release."
   license: MIT
   language: go
