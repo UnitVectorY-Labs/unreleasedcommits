@@ -348,7 +348,8 @@ details.merge-commit[open] > summary::before {
     font-weight: 600;
 }
 
-.mobile-label {
+.mobile-label,
+.mobile-sort {
     display: none;
 }
 
@@ -390,24 +391,60 @@ details.merge-commit[open] > summary::before {
         box-shadow: none;
     }
 
-    thead tr {
+    /* Keep column headers available to screen readers without a visual header row. */
+    thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    /* Without JavaScript, keep headers visible; cards still contain every value. */
+    .mobile-sort[hidden] + table thead {
+        position: static;
+        width: auto;
+        height: auto;
+        overflow: visible;
+        clip-path: none;
+        white-space: normal;
+    }
+
+    .mobile-sort:not([hidden]) {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.5rem;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 0.375rem 0.5rem;
         margin-bottom: 1rem;
     }
 
-    th {
-        padding: 0;
-        border: 0;
-        border-radius: 6px;
+    .mobile-sort label {
+        grid-column: 1 / -1;
+        color: #64748b;
         font-size: 0.85rem;
     }
 
-    .sort-button {
+    .mobile-sort select,
+    .mobile-sort button {
+        min-width: 0;
         min-height: 44px;
-        height: 100%;
-        padding: 0.5rem 0.75rem;
+        padding: 0.5rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background: white;
+        color: #1e3a8a;
+        font: inherit;
+    }
+
+    .mobile-sort button {
+        cursor: pointer;
+    }
+
+    .mobile-sort select:focus-visible,
+    .mobile-sort button:focus-visible {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
     }
 
     tbody {
