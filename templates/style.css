@@ -127,7 +127,6 @@ table {
     background-color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     table-layout: auto;
-    overflow-x: auto;
     display: table;
 }
 
@@ -349,14 +348,136 @@ details.merge-commit[open] > summary::before {
     font-weight: 600;
 }
 
+.mobile-label {
+    display: none;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .container {
         padding: 1rem;
     }
     
+    header h1,
+    .repo-info,
+    .commit-card,
+    footer {
+        overflow-wrap: anywhere;
+    }
+
+    .summary-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.5rem;
+    }
+
+    .stat-card {
+        padding: 0.75rem 0.25rem;
+    }
+
+    .info-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* Reflow the same table into cards; every value and sort control stays available. */
+    table,
+    thead,
+    tbody {
+        display: block;
+    }
+
     table {
-        font-size: 0.9em;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    thead tr {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    th {
+        padding: 0;
+        border: 0;
+        border-radius: 6px;
+        font-size: 0.85rem;
+    }
+
+    .sort-button {
+        min-height: 44px;
+        height: 100%;
+        padding: 0.5rem 0.75rem;
+    }
+
+    tbody {
+        display: grid;
+        gap: 1rem;
+    }
+
+    tbody tr {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    tbody tr.has-commits,
+    tbody tr:hover,
+    tbody tr.has-commits:hover {
+        background: white;
+    }
+
+    td {
+        min-width: 0;
+        padding: 0.75rem;
+        border-bottom: 0;
+        overflow-wrap: anywhere;
+    }
+
+    td:first-child,
+    .release-cell {
+        grid-column: 1 / -1;
+    }
+
+    td:first-child {
+        padding-bottom: 0.25rem;
+        font-size: 1.1rem;
+    }
+
+    .release-cell {
+        padding-top: 0;
+    }
+
+    .mobile-label {
+        display: block;
+        margin-bottom: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 400;
+        line-height: 1.4;
+    }
+
+    .release-cell .mobile-label {
+        display: inline;
+        margin-right: 0.5rem;
+    }
+
+    .metric-cell {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 0.75rem 0.25rem;
+        font-size: 1.15rem;
+    }
+
+    .metric-cell:nth-child(3) {
+        border-bottom-left-radius: 7px;
+    }
+
+    .metric-cell:last-child {
+        border-bottom-right-radius: 7px;
     }
     
     .commit-header {

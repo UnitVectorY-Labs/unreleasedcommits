@@ -27,26 +27,26 @@
             </div>
 
             <h2>Repositories</h2>
-            <table data-sortable>
-                <thead>
-                    <tr>
-                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="text">Repository</button></th>
-                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="text">Latest Release</button></th>
-                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Unreleased Commits</button></th>
-                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Days Behind</button></th>
-                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Days Since Release</button></th>
+            <table data-sortable role="table">
+                <thead role="rowgroup">
+                    <tr role="row">
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="text">Repository</button></th>
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="text">Latest Release</button></th>
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Unreleased Commits</button></th>
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Days Behind</button></th>
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Days Since Release</button></th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody role="rowgroup">
                     {{range .Repos}}
-                    <tr class="{{if gt .CommitCount 0}}has-commits{{end}}">
-                        <td>
+                    <tr role="row" class="{{if gt .CommitCount 0}}has-commits{{end}}">
+                        <td role="cell">
                             <a href="{{.Name}}.html" class="repo-link">{{.Name}}</a>
                         </td>
-                        <td><a href="{{.RepositoryURL}}/releases/tag/{{.LatestRelease}}" target="_blank" class="github-link">{{.LatestRelease}}</a></td>
-                        <td class="metric-cell" data-sort-value="{{.CommitCount}}" style="background-color: {{.CommitCountBgColor}}; color: {{.CommitCountTextColor}};">{{if gt .CommitCount 0}}<a href="{{.RepositoryURL}}/compare/{{.LatestRelease}}...{{.DefaultBranch}}" target="_blank" class="github-link" style="color: inherit;">{{.CommitCount}}</a>{{else}}{{.CommitCount}}{{end}}</td>
-                        <td class="metric-cell" data-sort-value="{{.DaysBehind}}" style="background-color: {{.DaysBehindBgColor}}; color: {{.DaysBehindTextColor}};">{{.DaysBehind}}</td>
-                        <td class="metric-cell" data-sort-value="{{.DaysSinceRelease}}" style="background-color: {{.DaysSinceBgColor}}; color: {{.DaysSinceTextColor}};">{{.DaysSinceRelease}}</td>
+                        <td role="cell" class="release-cell"><span class="mobile-label" aria-hidden="true">Latest Release</span><a href="{{.RepositoryURL}}/releases/tag/{{.LatestRelease}}" target="_blank" class="github-link">{{.LatestRelease}}</a></td>
+                        <td role="cell" class="metric-cell" data-sort-value="{{.CommitCount}}" style="background-color: {{.CommitCountBgColor}}; color: {{.CommitCountTextColor}};"><span class="mobile-label" aria-hidden="true">Unreleased Commits</span>{{if gt .CommitCount 0}}<a href="{{.RepositoryURL}}/compare/{{.LatestRelease}}...{{.DefaultBranch}}" target="_blank" class="github-link" style="color: inherit;">{{.CommitCount}}</a>{{else}}{{.CommitCount}}{{end}}</td>
+                        <td role="cell" class="metric-cell" data-sort-value="{{.DaysBehind}}" style="background-color: {{.DaysBehindBgColor}}; color: {{.DaysBehindTextColor}};"><span class="mobile-label" aria-hidden="true">Days Behind</span>{{.DaysBehind}}</td>
+                        <td role="cell" class="metric-cell" data-sort-value="{{.DaysSinceRelease}}" style="background-color: {{.DaysSinceBgColor}}; color: {{.DaysSinceTextColor}};"><span class="mobile-label" aria-hidden="true">Days Since Release</span>{{.DaysSinceRelease}}</td>
                     </tr>
                     {{end}}
                 </tbody>
