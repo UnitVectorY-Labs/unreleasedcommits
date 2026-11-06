@@ -27,26 +27,37 @@
             </div>
 
             <h2>Repositories</h2>
-            <table data-sortable>
-                <thead>
-                    <tr>
-                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="text">Repository</button></th>
-                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="text">Latest Release</button></th>
-                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Unreleased Commits</button></th>
-                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Days Behind</button></th>
-                        <th aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Days Since Release</button></th>
+            <div class="mobile-sort" hidden>
+                <label for="sort-field">Sort by</label>
+                <select id="sort-field">
+                    <option value="0">Repository</option>
+                    <option value="1">Latest Release</option>
+                    <option value="2">Unreleased Commits</option>
+                    <option value="3">Days Behind</option>
+                    <option value="4">Days Since Release</option>
+                </select>
+                <button type="button" id="sort-direction" aria-label="Sort order: A to Z. Reverse sort order">A–Z ↑</button>
+            </div>
+            <table data-sortable role="table">
+                <thead role="rowgroup">
+                    <tr role="row">
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="text">Repository</button></th>
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="text">Latest Release</button></th>
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Unreleased Commits</button></th>
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Days Behind</button></th>
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Days Since Release</button></th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody role="rowgroup">
                     {{range .Repos}}
-                    <tr class="{{if gt .CommitCount 0}}has-commits{{end}}">
-                        <td>
+                    <tr role="row" class="{{if gt .CommitCount 0}}has-commits{{end}}">
+                        <td role="cell">
                             <a href="{{.Name}}.html" class="repo-link">{{.Name}}</a>
                         </td>
-                        <td><a href="{{.RepositoryURL}}/releases/tag/{{.LatestRelease}}" target="_blank" class="github-link">{{.LatestRelease}}</a></td>
-                        <td class="metric-cell" data-sort-value="{{.CommitCount}}" style="background-color: {{.CommitCountBgColor}}; color: {{.CommitCountTextColor}};">{{if gt .CommitCount 0}}<a href="{{.RepositoryURL}}/compare/{{.LatestRelease}}...{{.DefaultBranch}}" target="_blank" class="github-link" style="color: inherit;">{{.CommitCount}}</a>{{else}}{{.CommitCount}}{{end}}</td>
-                        <td class="metric-cell" data-sort-value="{{.DaysBehind}}" style="background-color: {{.DaysBehindBgColor}}; color: {{.DaysBehindTextColor}};">{{.DaysBehind}}</td>
-                        <td class="metric-cell" data-sort-value="{{.DaysSinceRelease}}" style="background-color: {{.DaysSinceBgColor}}; color: {{.DaysSinceTextColor}};">{{.DaysSinceRelease}}</td>
+                        <td role="cell" class="release-cell" data-sort-value="{{.LatestRelease}}"><span class="mobile-label" aria-hidden="true">Latest Release</span><a href="{{.RepositoryURL}}/releases/tag/{{.LatestRelease}}" target="_blank" class="github-link">{{.LatestRelease}}</a></td>
+                        <td role="cell" class="metric-cell" data-sort-value="{{.CommitCount}}" style="background-color: {{.CommitCountBgColor}}; color: {{.CommitCountTextColor}};"><span class="mobile-label" aria-hidden="true">Unreleased Commits</span>{{if gt .CommitCount 0}}<a href="{{.RepositoryURL}}/compare/{{.LatestRelease}}...{{.DefaultBranch}}" target="_blank" class="github-link" style="color: inherit;">{{.CommitCount}}</a>{{else}}{{.CommitCount}}{{end}}</td>
+                        <td role="cell" class="metric-cell" data-sort-value="{{.DaysBehind}}" style="background-color: {{.DaysBehindBgColor}}; color: {{.DaysBehindTextColor}};"><span class="mobile-label" aria-hidden="true">Days Behind</span>{{.DaysBehind}}</td>
+                        <td role="cell" class="metric-cell" data-sort-value="{{.DaysSinceRelease}}" style="background-color: {{.DaysSinceBgColor}}; color: {{.DaysSinceTextColor}};"><span class="mobile-label" aria-hidden="true">Days Since Release</span>{{.DaysSinceRelease}}</td>
                     </tr>
                     {{end}}
                 </tbody>
@@ -76,48 +87,81 @@
                 row.dataset.originalIndex = index;
             });
 
+            const mobileSort = document.querySelector('.mobile-sort');
+            const sortField = document.querySelector('#sort-field');
+            const sortDirection = document.querySelector('#sort-direction');
+            let activeColumn = 0;
+            let activeDirection = 'ascending';
+
+            function sortRows(column, direction) {
+                const header = headers[column];
+                const button = header.querySelector('.sort-button');
+                const numeric = button.dataset.sortType === 'number';
+                const multiplier = direction === 'ascending' ? 1 : -1;
+                const rows = Array.from(tbody.rows);
+
+                rows.sort((leftRow, rightRow) => {
+                    const leftCell = leftRow.cells[column];
+                    const rightCell = rightRow.cells[column];
+                    const leftValue = leftCell.dataset.sortValue ?? leftCell.textContent.trim();
+                    const rightValue = rightCell.dataset.sortValue ?? rightCell.textContent.trim();
+                    const comparison = numeric
+                        ? Number(leftValue) - Number(rightValue)
+                        : collator.compare(leftValue, rightValue);
+                    return comparison === 0
+                        ? Number(leftRow.dataset.originalIndex) - Number(rightRow.dataset.originalIndex)
+                        : comparison * multiplier;
+                });
+
+                headers.forEach((otherHeader) => {
+                    otherHeader.setAttribute('aria-sort', 'none');
+                    const otherButton = otherHeader.querySelector('.sort-button');
+                    if (otherButton) delete otherButton.dataset.direction;
+                });
+                header.setAttribute('aria-sort', direction);
+                button.dataset.direction = direction;
+                tbody.append(...rows);
+
+                activeColumn = column;
+                activeDirection = direction;
+                sortField.value = String(column);
+                const ascending = direction === 'ascending';
+                const label = numeric
+                    ? (ascending ? 'Lowest first' : 'Highest first')
+                    : (ascending ? 'A–Z' : 'Z–A');
+                sortDirection.textContent = `${label} ${ascending ? '↑' : '↓'}`;
+                sortDirection.setAttribute('aria-label', `Sort order: ${label}. Reverse sort order`);
+            }
+
             headers.forEach((header) => {
                 const button = header.querySelector('.sort-button');
                 if (!button) return;
-
                 button.addEventListener('click', () => {
-                    const column = header.cellIndex;
                     const currentDirection = header.getAttribute('aria-sort');
                     const direction = currentDirection === 'none'
                         ? (button.dataset.sortType === 'number' ? 'descending' : 'ascending')
                         : (currentDirection === 'ascending' ? 'descending' : 'ascending');
-                    const multiplier = direction === 'ascending' ? 1 : -1;
-                    const rows = Array.from(tbody.rows);
-
-                    rows.sort((leftRow, rightRow) => {
-                        const leftCell = leftRow.cells[column];
-                        const rightCell = rightRow.cells[column];
-                        const leftValue = leftCell.dataset.sortValue ?? leftCell.textContent.trim();
-                        const rightValue = rightCell.dataset.sortValue ?? rightCell.textContent.trim();
-                        let comparison;
-
-                        if (button.dataset.sortType === 'number') {
-                            comparison = Number(leftValue) - Number(rightValue);
-                        } else {
-                            comparison = collator.compare(leftValue, rightValue);
-                        }
-
-                        if (comparison === 0) {
-                            return Number(leftRow.dataset.originalIndex) - Number(rightRow.dataset.originalIndex);
-                        }
-                        return comparison * multiplier;
-                    });
-
-                    headers.forEach((otherHeader) => {
-                        otherHeader.setAttribute('aria-sort', 'none');
-                        const otherButton = otherHeader.querySelector('.sort-button');
-                        if (otherButton) delete otherButton.dataset.direction;
-                    });
-                    header.setAttribute('aria-sort', direction);
-                    button.dataset.direction = direction;
-                    tbody.append(...rows);
+                    sortRows(header.cellIndex, direction);
                 });
             });
+
+            sortField.addEventListener('change', () => {
+                const column = Number(sortField.value);
+                const numeric = headers[column].querySelector('.sort-button').dataset.sortType === 'number';
+                sortRows(column, numeric ? 'descending' : 'ascending');
+            });
+            sortDirection.addEventListener('click', () => {
+                sortRows(activeColumn, activeDirection === 'ascending' ? 'descending' : 'ascending');
+            });
+            const mobileLayout = window.matchMedia('(max-width: 768px)');
+            function updateHeaderFocus() {
+                headers.forEach((header) => {
+                    header.querySelector('.sort-button').tabIndex = mobileLayout.matches ? -1 : 0;
+                });
+            }
+            mobileLayout.addEventListener('change', updateHeaderFocus);
+            updateHeaderFocus();
+            mobileSort.hidden = false;
         })();
     </script>
 </body>

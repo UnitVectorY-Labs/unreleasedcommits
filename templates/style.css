@@ -127,7 +127,6 @@ table {
     background-color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     table-layout: auto;
-    overflow-x: auto;
     display: table;
 }
 
@@ -349,14 +348,173 @@ details.merge-commit[open] > summary::before {
     font-weight: 600;
 }
 
+.mobile-label,
+.mobile-sort {
+    display: none;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .container {
         padding: 1rem;
     }
     
+    header h1,
+    .repo-info,
+    .commit-card,
+    footer {
+        overflow-wrap: anywhere;
+    }
+
+    .summary-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.5rem;
+    }
+
+    .stat-card {
+        padding: 0.75rem 0.25rem;
+    }
+
+    .info-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* Reflow the same table into cards; every value and sort control stays available. */
+    table,
+    thead,
+    tbody {
+        display: block;
+    }
+
     table {
-        font-size: 0.9em;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    /* Keep column headers available to screen readers without a visual header row. */
+    thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    /* Without JavaScript, keep headers visible; cards still contain every value. */
+    .mobile-sort[hidden] + table thead {
+        position: static;
+        width: auto;
+        height: auto;
+        overflow: visible;
+        clip-path: none;
+        white-space: normal;
+    }
+
+    .mobile-sort:not([hidden]) {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 0.375rem 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .mobile-sort label {
+        grid-column: 1 / -1;
+        color: #64748b;
+        font-size: 0.85rem;
+    }
+
+    .mobile-sort select,
+    .mobile-sort button {
+        min-width: 0;
+        min-height: 44px;
+        padding: 0.5rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background: white;
+        color: #1e3a8a;
+        font: inherit;
+    }
+
+    .mobile-sort button {
+        cursor: pointer;
+    }
+
+    .mobile-sort select:focus-visible,
+    .mobile-sort button:focus-visible {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+    }
+
+    tbody {
+        display: grid;
+        gap: 1rem;
+    }
+
+    tbody tr {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    tbody tr.has-commits,
+    tbody tr:hover,
+    tbody tr.has-commits:hover {
+        background: white;
+    }
+
+    td {
+        min-width: 0;
+        padding: 0.75rem;
+        border-bottom: 0;
+        overflow-wrap: anywhere;
+    }
+
+    td:first-child,
+    .release-cell {
+        grid-column: 1 / -1;
+    }
+
+    td:first-child {
+        padding-bottom: 0.25rem;
+        font-size: 1.1rem;
+    }
+
+    .release-cell {
+        padding-top: 0;
+    }
+
+    .mobile-label {
+        display: block;
+        margin-bottom: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 400;
+        line-height: 1.4;
+    }
+
+    .release-cell .mobile-label {
+        display: inline;
+        margin-right: 0.5rem;
+    }
+
+    .metric-cell {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 0.75rem 0.25rem;
+        font-size: 1.15rem;
+    }
+
+    .metric-cell:nth-child(3) {
+        border-bottom-left-radius: 7px;
+    }
+
+    .metric-cell:last-child {
+        border-bottom-right-radius: 7px;
     }
     
     .commit-header {
