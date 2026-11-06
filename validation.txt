@@ -1,0 +1,49 @@
+Screenshots: [
+  {
+    "variant": "before",
+    "name": "mobile-index",
+    "viewport": 676,
+    "document": 676,
+    "rows": 58
+  },
+  {
+    "variant": "before",
+    "name": "mobile-repository",
+    "viewport": 1232,
+    "document": 1232
+  },
+  {
+    "variant": "before",
+    "name": "desktop-index",
+    "viewport": 1440,
+    "document": 1440,
+    "rows": 58
+  },
+  {
+    "variant": "after",
+    "name": "mobile-index",
+    "viewport": 390,
+    "document": 390,
+    "rows": 58
+  },
+  {
+    "variant": "after",
+    "name": "mobile-repository",
+    "viewport": 390,
+    "document": 390
+  },
+  {
+    "variant": "after",
+    "name": "desktop-index",
+    "viewport": 1440,
+    "document": 1440,
+    "rows": 58
+  }
+]
+Passed 320px: all 59 pages fit; all five sort controls work both ways
+Passed 375px: all 59 pages fit; all five sort controls work both ways
+Passed 390px: all 59 pages fit; all five sort controls work both ways
+Passed 430px: all 59 pages fit; all five sort controls work both ways
+Passed 768px: all 59 pages fit; all five sort controls work both ways
+Passed 1440px: all 59 pages fit; all five sort controls work both ways
+Total page/viewport overflow checks: 354
