@@ -47,3 +47,4 @@ Passed 430px: all 59 pages fit; all five sort controls work both ways
 Passed 768px: all 59 pages fit; all five sort controls work both ways
 Passed 1440px: all 59 pages fit; all five sort controls work both ways
 Total page/viewport overflow checks: 354
+Passed mobile labels/defaults, reverse order, desktop-to-mobile synchronization, and responsive keyboard focus
