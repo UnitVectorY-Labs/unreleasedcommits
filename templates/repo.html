@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Name}} - Unreleased Commits</title>
+    <script src="uvy-design/uvy-theme.js"></script>
+    <link rel="stylesheet" href="uvy-design/uvy-tokens.css">
+    <link rel="stylesheet" href="uvy-design/uvy-elements.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <a href="index.html"><h1>Unreleased Commits - {{.Owner}}</h1></a>
-    </header>
+    {{template "site-header" .}}
     <main class="container">
             <div class="repo-info">
                 <div class="info-grid">
@@ -50,7 +51,7 @@
                 {{range .UnreleasedCommits}}
                 {{if .IsMerge}}
                 <details class="commit-card merge-commit">
-                    <summary class="commit-header">
+                    <summary class="commit-header"><span class="merge-chevron">{{template "icon-arrow-up"}}</span>
                         <a href="{{.URL}}" target="_blank" class="commit-sha">{{.SHA}}</a>
                         <span class="commit-author">{{.Author}}</span>
                         <span class="commit-date">{{.Timestamp.Format "Jan 2, 2006 15:04"}}</span>
@@ -72,20 +73,11 @@
             </div>
             {{else}}
             <div class="no-commits">
-                <p>🎉 No unreleased commits! The {{.DefaultBranch}} branch is up to date with the latest release.</p>
+                <p>{{template "icon-check"}} No unreleased commits! The {{.DefaultBranch}} branch is up to date with the latest release.</p>
             </div>
             {{end}}
     </main>
-    <footer>
-        <p>
-            <a href="https://github.com/UnitVectorY-Labs">UnitVectorY Labs</a> | 
-            <a href="https://opensource.org/licenses/MIT">MIT License</a> | 
-            <a href="https://github.com/UnitVectorY-Labs/unreleasedcommits"><strong>unreleasedcommits</strong> on GitHub</a>
-        </p>
-        {{if .LastUpdated}}
-        <p class="last-updated">Last updated: {{.LastUpdated}}</p>
-        {{end}}
-    </footer>
+    {{template "site-footer" .}}
 
 </body>
 </html>

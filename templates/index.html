@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Owner}} - Unreleased Commits</title>
+    <script src="uvy-design/uvy-theme.js"></script>
+    <link rel="stylesheet" href="uvy-design/uvy-tokens.css">
+    <link rel="stylesheet" href="uvy-design/uvy-elements.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <a href="index.html"><h1>Unreleased Commits - {{.Owner}}</h1></a>
-    </header>
+    {{template "site-header" .}}
     <main class="container">
             <div class="summary-stats">
                 <div class="stat-card">
@@ -36,16 +37,16 @@
                     <option value="3">Days Behind</option>
                     <option value="4">Days Since Release</option>
                 </select>
-                <button type="button" id="sort-direction" aria-label="Sort order: A to Z. Reverse sort order">A–Z ↑</button>
+                <button type="button" id="sort-direction" aria-label="Sort order: A to Z. Reverse sort order">{{template "icon-arrow-up"}}<span>A–Z</span></button>
             </div>
             <table data-sortable role="table">
                 <thead role="rowgroup">
                     <tr role="row">
-                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="text">Repository</button></th>
-                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="text">Latest Release</button></th>
-                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Unreleased Commits</button></th>
-                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Days Behind</button></th>
-                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Days Since Release</button></th>
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="text">Repository<span class="desktop-sort-icon">{{template "icon-arrow-up"}}</span></button></th>
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="text">Latest Release<span class="desktop-sort-icon">{{template "icon-arrow-up"}}</span></button></th>
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Unreleased Commits<span class="desktop-sort-icon">{{template "icon-arrow-up"}}</span></button></th>
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Days Behind<span class="desktop-sort-icon">{{template "icon-arrow-up"}}</span></button></th>
+                        <th role="columnheader" aria-sort="none"><button type="button" class="sort-button" data-sort-type="number">Days Since Release<span class="desktop-sort-icon">{{template "icon-arrow-up"}}</span></button></th>
                     </tr>
                 </thead>
                 <tbody role="rowgroup">
@@ -63,16 +64,7 @@
                 </tbody>
             </table>
     </main>
-    <footer>
-        <p>
-            <a href="https://github.com/UnitVectorY-Labs">UnitVectorY Labs</a> | 
-            <a href="https://opensource.org/licenses/MIT">MIT License</a> | 
-            <a href="https://github.com/UnitVectorY-Labs/unreleasedcommits"><strong>unreleasedcommits</strong> on GitHub</a>
-        </p>
-        {{if .LastUpdated}}
-        <p class="last-updated">Last updated: {{.LastUpdated}}</p>
-        {{end}}
-    </footer>
+    {{template "site-footer" .}}
 
     <script>
         (() => {
@@ -129,7 +121,8 @@
                 const label = numeric
                     ? (ascending ? 'Lowest first' : 'Highest first')
                     : (ascending ? 'A–Z' : 'Z–A');
-                sortDirection.textContent = `${label} ${ascending ? '↑' : '↓'}`;
+                sortDirection.querySelector('span').textContent = label;
+                sortDirection.querySelector('svg').style.transform = ascending ? '' : 'rotate(180deg)';
                 sortDirection.setAttribute('aria-label', `Sort order: ${label}. Reverse sort order`);
             }
 
