@@ -1,8 +1,8 @@
 # UVY Design v0.1.0 adoption
 
-Source release: https://github.com/UnitVectorY-Labs/uvy-design/releases/tag/v0.1.0
+Source standards snapshot: https://github.com/UnitVectorY-Labs/uvy-design/tree/12f8e3d964785d78628346516351fe4dac583cef
 
-Pinned source commit: `396a65021c2bcab8dbcb3d1bb4cb498c807a4396`.
+Pinned source commit: `12f8e3d964785d78628346516351fe4dac583cef`.
 
 Canonical tokens, optional element styling and theme controller are copied verbatim into `templates/uvy-design/`, embedded in the binary and emitted locally in every generated output. The existing `templates/style.css` is the app-specific adapter. `templates/shared.html` contains inline official Tabler paths copied from the release; the MIT icon notice is retained. No HTMX or external runtime dependency is introduced.
 
@@ -20,7 +20,7 @@ No screenshots are committed to this application. Evidence is hosted in the desi
 
 ## Update procedure
 
-Choose a reviewed future release, verify archive checksums and file hashes, then replace only canonical copied files. Review source diffs and update this record; keep app-specific adapter changes local. Rebuild and repeat workflow/evidence checks before updating consumers. Never fetch design assets at browser runtime or from a mutable branch.
+Choose a reviewed future design commit, verify file hashes and file hashes, then replace only canonical copied files. Review source diffs and update this record; keep app-specific adapter changes local. Rebuild and repeat workflow/evidence checks before updating consumers. Never fetch design assets at browser runtime or from a mutable branch.
 
 ## Copied-file SHA-256
 
