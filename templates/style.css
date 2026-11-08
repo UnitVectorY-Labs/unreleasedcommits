@@ -604,16 +604,16 @@ details.merge-commit[open] > summary::before {
 body { font-family: var(--uvy-font); line-height: 1.5; background: var(--uvy-page); color: var(--uvy-text); }
 a { color: var(--uvy-link); text-underline-offset: 3px; }
 a:hover { text-decoration: underline; }
-header { background: var(--uvy-page); color: var(--uvy-text); border: 0; box-shadow: none; padding: 24px 24px 0; text-align: left; }
+header { background: #3b82f6; color: white; padding: 1rem 24px; text-align: left; }
 .header-inner { display: grid; grid-template-columns: minmax(0,1fr) 44px; align-items: start; gap: 12px; max-width: 75rem; margin: auto; }
-header a h1 { color: var(--uvy-link); font-size: 2rem; line-height: 1.2; font-weight: 600; }
+header a h1 { color: white; font-size: 2rem; line-height: 1.2; font-weight: 600; }
 header a h1::after, h2::after { content: ""; display: block; width: 48px; height: 3px; margin-top: 8px; background: var(--uvy-accent-fill); }
-.site-subtitle { color: var(--uvy-muted); font-size: 17px; font-weight: 600; margin-top: 8px; overflow-wrap: anywhere; }
-header #theme-toggle { color: var(--uvy-link); border-color: var(--uvy-control); }
-header #theme-toggle:hover { background: var(--uvy-blue-soft); border-color: var(--uvy-link); }
-header #theme-toggle:focus-visible { outline-color: var(--uvy-focus); }
+.site-subtitle { color: white; font-size: 17px; font-weight: 600; margin-top: 8px; overflow-wrap: anywhere; }
+header #theme-toggle { color: white; border-color: white; }
+header #theme-toggle:hover { background: rgb(255 255 255 / 15%); }
+header #theme-toggle:focus-visible { outline-color: white; }
 header a { min-width: 0; }
-header a:hover { color: var(--uvy-link); }
+header a:hover { color: white; }
 .container { padding: var(--uvy-section-gap); background: var(--uvy-page); }
 h2 { color: var(--uvy-link); font-size: 1.5rem; line-height: 1.2; font-weight: 600; margin: 24px 0 16px; }
 .summary-stats { gap: 16px; }
@@ -629,7 +629,7 @@ tr:hover { background: var(--uvy-blue-soft); }
 .sort-button::after { content: none; }
 .sort-button { min-height: 44px; }
 .sort-button:focus-visible, :focus-visible { outline: 3px solid var(--uvy-focus); outline-offset: 3px; }
-header :focus-visible { outline-color: var(--uvy-focus); }
+header :focus-visible { outline-color: white; }
 .metric-cell { transition: none; font-variant-numeric: tabular-nums; }
 .repo-info { background: var(--uvy-surface); border: 1px solid var(--uvy-divider); border-radius: var(--uvy-radius-panel); box-shadow: var(--uvy-shadow); padding: var(--uvy-panel-pad); }
 .label { font-size: 13px; }
