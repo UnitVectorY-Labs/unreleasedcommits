@@ -71,5 +71,5 @@
   <path d="M5 12l5 5l10 -10" />
 </svg>
 {{end}}
-{{define "site-header"}}<header><div class="header-inner"><a href="index.html"><h1>Unreleased Commits</h1></a><button type="button" class="uvy-theme-toggle" data-uvy-theme-toggle hidden aria-label="Switch to dark mode"><span class="uvy-theme-dark-icon">{{template "icon-moon"}}</span><span class="uvy-theme-light-icon">{{template "icon-sun"}}</span></button></div></header>{{end}}
+{{define "site-header"}}<header><div class="header-inner"><div class="site-identity"><a href="index.html"><h1>Unreleased Commits</h1></a><p class="site-subtitle">{{.Owner}}</p></div><button type="button" class="uvy-theme-toggle" data-uvy-theme-toggle hidden aria-label="Switch to dark mode"><span class="uvy-theme-dark-icon">{{template "icon-moon"}}</span><span class="uvy-theme-light-icon">{{template "icon-sun"}}</span></button></div></header>{{end}}
 {{define "site-footer"}}<footer><p><a href="https://github.com/UnitVectorY-Labs/unreleasedcommits">{{template "icon-brand-github"}} Open source on GitHub</a> · <a href="https://github.com/UnitVectorY-Labs/unreleasedcommits/blob/main/LICENSE">MIT License</a></p>{{if .LastUpdated}}<p class="last-updated">Last updated: {{.LastUpdated}}</p>{{end}}</footer>{{end}}

@@ -528,17 +528,20 @@ details.merge-commit[open] > summary::before {
 body { font-family: var(--uvy-font); line-height: 1.5; background: var(--uvy-page); color: var(--uvy-text); }
 a { color: var(--uvy-link); text-underline-offset: 3px; }
 a:hover { text-decoration: underline; }
-header { background: var(--uvy-masthead); color: var(--uvy-on-masthead); border-bottom: 4px solid var(--uvy-accent-fill); box-shadow: none; padding: 16px 24px; }
-.header-inner { display: grid; grid-template-columns: 44px minmax(0,1fr) 44px; align-items: center; gap: 12px; max-width: 1400px; margin: auto; }
-.header-inner::before { content: ""; }
-header a h1 { font-size: 26px; line-height: 1.25; font-weight: 700; }
+header { background: var(--uvy-page); color: var(--uvy-text); border: 0; box-shadow: none; padding: 24px 24px 0; text-align: left; }
+.header-inner { display: grid; grid-template-columns: minmax(0,1fr) 44px; align-items: start; gap: 12px; max-width: 1352px; margin: auto; }
+header a h1 { color: var(--uvy-link); font-size: 26px; line-height: 1.25; font-weight: 700; }
+header a h1::after, h2::after { content: ""; display: block; width: 48px; height: 3px; margin-top: 8px; background: var(--uvy-accent-fill); }
+.site-subtitle { color: var(--uvy-muted); font-size: 17px; font-weight: 600; margin-top: 8px; overflow-wrap: anywhere; }
+header .uvy-theme-toggle { color: var(--uvy-link); border-color: var(--uvy-control); }
+header .uvy-theme-toggle:hover { background: var(--uvy-blue-soft); border-color: var(--uvy-link); }
+header .uvy-theme-toggle:focus-visible { outline-color: var(--uvy-focus); }
 header a { min-width: 0; }
-header a:hover { color: white; }
+header a:hover { color: var(--uvy-link); }
 .container { padding: var(--uvy-section-gap); background: var(--uvy-page); }
 h2 { color: var(--uvy-link); font-size: 20px; line-height: 1.35; font-weight: 650; margin: 24px 0 16px; }
 .summary-stats { gap: 16px; }
-.stat-card { background: var(--uvy-surface); border: 1px solid var(--uvy-divider); border-top: 3px solid var(--uvy-link); border-radius: var(--uvy-radius-panel); box-shadow: var(--uvy-shadow); padding: 20px 16px; }
-.stat-card:nth-child(2) { border-top-color: var(--uvy-accent-fill); }
+.stat-card { background: var(--uvy-surface); border: 1px solid var(--uvy-divider); border-radius: var(--uvy-radius-panel); box-shadow: var(--uvy-shadow); padding: 20px 16px; }
 .stat-number { color: var(--uvy-link); font-size: 32px; line-height: 1.2; font-weight: 700; font-variant-numeric: tabular-nums; }
 .stat-label { color: var(--uvy-muted); font-size: 14px; line-height: 1.4; margin-top: 6px; }
 table { background: var(--uvy-surface); border: 1px solid var(--uvy-divider); border-radius: var(--uvy-radius-panel); box-shadow: var(--uvy-shadow); overflow: hidden; font-size: 14px; }
@@ -550,12 +553,12 @@ tr:hover { background: var(--uvy-blue-soft); }
 .sort-button::after { content: none; }
 .sort-button { min-height: 44px; }
 .sort-button:focus-visible, :focus-visible { outline: 3px solid var(--uvy-focus); outline-offset: 3px; }
-header :focus-visible { outline-color: white; }
+header :focus-visible { outline-color: var(--uvy-focus); }
 .metric-cell { transition: none; font-variant-numeric: tabular-nums; }
-.repo-info { background: var(--uvy-surface); border: 1px solid var(--uvy-divider); border-left: 4px solid var(--uvy-accent-fill); border-radius: var(--uvy-radius-panel); box-shadow: var(--uvy-shadow); padding: var(--uvy-panel-pad); }
+.repo-info { background: var(--uvy-surface); border: 1px solid var(--uvy-divider); border-radius: var(--uvy-radius-panel); box-shadow: var(--uvy-shadow); padding: var(--uvy-panel-pad); }
 .label { font-size: 13px; }
 .value, .commit-message { color: var(--uvy-text); }
-.commit-card { background: var(--uvy-surface); border: 1px solid var(--uvy-divider); border-left: 4px solid var(--uvy-link); border-radius: var(--uvy-radius-panel); box-shadow: var(--uvy-shadow); padding: var(--uvy-panel-pad); }
+.commit-card { background: var(--uvy-surface); border: 1px solid var(--uvy-divider); border-radius: var(--uvy-radius-panel); box-shadow: var(--uvy-shadow); padding: var(--uvy-panel-pad); }
 .commit-sha { background: var(--uvy-masthead); color: white; font-family: var(--uvy-mono); font-size: 14px; overflow-wrap: anywhere; }
 .commit-sha:hover { background: var(--uvy-link); color: var(--uvy-surface); }
 .commit-author { font-size: 14px; }
