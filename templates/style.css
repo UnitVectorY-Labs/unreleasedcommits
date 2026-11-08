@@ -604,7 +604,7 @@ details.merge-commit[open] > summary::before {
 body { font-family: var(--uvy-font); line-height: 1.5; background: var(--uvy-page); color: var(--uvy-text); }
 a { color: var(--uvy-link); text-underline-offset: 3px; }
 a:hover { text-decoration: underline; }
-header { background: #3b82f6; color: white; padding: 1rem 24px; text-align: left; }
+header { background: #174b93; color: white; padding: 1rem 24px; text-align: left; }
 .header-inner { display: grid; grid-template-columns: minmax(0,1fr) 44px; align-items: start; gap: 12px; max-width: 75rem; margin: auto; }
 header a h1 { color: white; font-size: 2rem; line-height: 1.2; font-weight: 600; }
 header a h1::after, h2::after { content: ""; display: block; width: 48px; height: 3px; margin-top: 8px; background: var(--uvy-accent-fill); }
