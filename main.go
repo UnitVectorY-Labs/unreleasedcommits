@@ -20,7 +20,7 @@ import (
 // templateFS embeds all HTML templates from the templates directory.
 //
 //go:embed templates/*.html
-//go:embed templates/style.css templates/uvy-design/*
+//go:embed templates/style.css
 var templateFS embed.FS
 
 // CommitInfo represents a single commit with all relevant details

@@ -36,22 +36,12 @@ func getColorForValue(normalizedValue float64) string {
 	return fmt.Sprintf("#%02x%02x%02x", r, g, b)
 }
 
-// getTextColor preserves the existing spectrum and chooses readable text from its luminance.
+// getTextColor returns white or black text color based on background brightness
 func getTextColor(normalizedValue float64) string {
-	var r, g, b int
-	fmt.Sscanf(getColorForValue(normalizedValue), "#%02x%02x%02x", &r, &g, &b)
-	linear := func(channel int) float64 {
-		value := float64(channel) / 255
-		if value <= 0.04045 {
-			return value / 12.92
-		}
-		return math.Pow((value+0.055)/1.055, 2.4)
+	if normalizedValue > 0.6 {
+		return "#ffffff"
 	}
-	luminance := 0.2126*linear(r) + 0.7152*linear(g) + 0.0722*linear(b)
-	if (luminance+0.05)/0.05 >= 1.05/(luminance+0.05) {
-		return "#000000"
-	}
-	return "#ffffff"
+	return "#000000"
 }
 
 func generateIndexPage(outputDir string, repos []RepositoryData, lastUpdated string) error {
@@ -260,22 +250,7 @@ func generateRepoPage(outputDir string, repo RepositoryData, lastUpdated string)
 }
 
 func generateCSS(outputDir string) error {
-	if err := copyEmbeddedFile(templateFS, "templates/style.css", filepath.Join(outputDir, "style.css")); err != nil {
-		return err
-	}
-	if err := os.MkdirAll(filepath.Join(outputDir, "uvy-design"), 0755); err != nil {
-		return err
-	}
-	for _, name := range []string{"uvy-tokens.css", "uvy-elements.css", "uvy-theme.js", "LICENSE", "TABLER-ICONS-LICENSE"} {
-		content, err := templateFS.ReadFile("templates/uvy-design/" + name)
-		if err != nil {
-			return fmt.Errorf("read shared design asset %s: %w", name, err)
-		}
-		if err := os.WriteFile(filepath.Join(outputDir, "uvy-design", name), content, 0644); err != nil {
-			return err
-		}
-	}
-	return nil
+	return copyEmbeddedFile(templateFS, "templates/style.css", filepath.Join(outputDir, "style.css"))
 }
 
 // loadTemplates loads templates from the embedded filesystem,
