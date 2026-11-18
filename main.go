@@ -3,7 +3,8 @@ package main
 import (
 	"context"
 	"embed"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"flag"
 	"fmt"
 	"log"
@@ -348,9 +349,11 @@ func writeJSON(filename string, data any) error {
 	}
 	defer file.Close()
 
-	encoder := json.NewEncoder(file)
-	encoder.SetIndent("", "  ")
-	return encoder.Encode(data)
+	if err := json.MarshalWrite(file, data, jsontext.WithIndent("  ")); err != nil {
+		return err
+	}
+	_, err = file.WriteString("\n")
+	return err
 }
 
 func loadLastCrawlTimestamp(filename string) (time.Time, error) {
