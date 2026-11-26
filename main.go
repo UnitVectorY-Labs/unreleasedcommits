@@ -112,9 +112,15 @@ func runCrawl(owner string, limit int) {
 		log.Fatalf("Failed to create output directory: %v", err)
 	}
 
-	repos, err := listPublicRepos(ctx, client, owner, limit)
+	repos, archivedRepos, err := listPublicRepos(ctx, client, owner, limit)
 	if err != nil {
 		log.Fatalf("Failed to list repositories: %v", err)
+	}
+
+	for _, repo := range archivedRepos {
+		if err := removeArchivedRepoFiles(outputDir, "output", repo.GetName()); err != nil {
+			log.Fatalf("Failed to remove cached files for archived repository %s: %v", repo.GetName(), err)
+		}
 	}
 
 	fmt.Printf("Found %d public repositories\n", len(repos))
@@ -278,8 +284,9 @@ func runGenerate() {
 	fmt.Printf("   Open %s/index.html in your browser\n", outputDir)
 }
 
-func listPublicRepos(ctx context.Context, client *github.Client, owner string, limit int) ([]*github.Repository, error) {
+func listPublicRepos(ctx context.Context, client *github.Client, owner string, limit int) ([]*github.Repository, []*github.Repository, error) {
 	var allRepos []*github.Repository
+	var archivedRepos []*github.Repository
 	opt := &github.RepositoryListByOrgOptions{
 		Type:        "public",
 		ListOptions: github.ListOptions{PerPage: 100},
@@ -288,18 +295,19 @@ func listPublicRepos(ctx context.Context, client *github.Client, owner string, l
 	for {
 		repos, resp, err := client.Repositories.ListByOrg(ctx, owner, opt)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
 		for _, repo := range repos {
 			if repo.GetArchived() {
+				archivedRepos = append(archivedRepos, repo)
 				continue
 			}
 			allRepos = append(allRepos, repo)
 		}
 
 		if limit > 0 && len(allRepos) >= limit {
-			return allRepos[:limit], nil
+			return allRepos[:limit], archivedRepos, nil
 		}
 
 		if resp.NextPage == 0 {
@@ -308,7 +316,20 @@ func listPublicRepos(ctx context.Context, client *github.Client, owner string, l
 		opt.Page = resp.NextPage
 	}
 
-	return allRepos, nil
+	return allRepos, archivedRepos, nil
+}
+
+// Remove both cached crawl data and any previously generated detail page.
+func removeArchivedRepoFiles(dataDir, outputDir, name string) error {
+	for _, filename := range []string{
+		filepath.Join(dataDir, name+".json"),
+		filepath.Join(outputDir, name+".html"),
+	} {
+		if err := os.Remove(filename); err != nil && !os.IsNotExist(err) {
+			return fmt.Errorf("remove %s: %w", filename, err)
+		}
+	}
+	return nil
 }
 
 func checkLatestRelease(ctx context.Context, client *github.Client, owner, repo string) (bool, *github.RepositoryRelease) {

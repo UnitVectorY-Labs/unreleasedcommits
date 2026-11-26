@@ -2,7 +2,13 @@ package main
 
 import (
 	"bytes"
+	"context"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+
 	"encoding/json/v2"
+	"github.com/google/go-github/v62/github"
 	"os"
 	"path/filepath"
 	"testing"
@@ -67,5 +73,64 @@ func TestLoadLastCrawlTimestamp(t *testing.T) {
 	}
 	if _, err := loadLastCrawlTimestamp(path); err == nil {
 		t.Fatal("accepted duplicate timestamp")
+	}
+}
+
+func TestArchivedRepositories(t *testing.T) {
+	for _, limit := range []int{0, 1} {
+		t.Run(fmt.Sprintf("limit_%d", limit), func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path != "/orgs/example/repos" || r.URL.Query().Get("type") != "public" {
+					t.Errorf("unexpected request: %s", r.URL)
+				}
+				if r.URL.Query().Get("page") == "2" {
+					fmt.Fprint(w, `[{"name":"active","archived":false}]`)
+					return
+				}
+				w.Header().Set("Link", fmt.Sprintf(`<http://%s/orgs/example/repos?page=2>; rel="next"`, r.Host))
+				fmt.Fprint(w, `[{"name":"archived","archived":true}]`)
+			}))
+			defer server.Close()
+			client, err := github.NewClient(server.Client()).WithEnterpriseURLs(server.URL+"/", server.URL+"/")
+			if err != nil {
+				t.Fatal(err)
+			}
+			// Use the test server directly, without the enterprise API path prefix.
+			client.BaseURL.Path = "/"
+			repos, archived, err := listPublicRepos(context.Background(), client, "example", limit)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(repos) != 1 || repos[0].GetName() != "active" || len(archived) != 1 || archived[0].GetName() != "archived" {
+				t.Fatalf("unexpected repositories: active=%v archived=%v", repos, archived)
+			}
+			dataDir, outputDir := t.TempDir(), t.TempDir()
+			for _, name := range []string{"active", "archived"} {
+				if err := writeJSON(filepath.Join(dataDir, name+".json"), RepositoryData{Name: name}); err != nil {
+					t.Fatal(err)
+				}
+				if err := os.WriteFile(filepath.Join(outputDir, name+".html"), []byte(name), 0600); err != nil {
+					t.Fatal(err)
+				}
+			}
+			for _, repo := range archived {
+				if err := removeArchivedRepoFiles(dataDir, outputDir, repo.GetName()); err != nil {
+					t.Fatal(err)
+				}
+			}
+			for _, path := range []string{filepath.Join(dataDir, "archived.json"), filepath.Join(outputDir, "archived.html")} {
+				if _, err := os.Stat(path); !os.IsNotExist(err) {
+					t.Errorf("archived file still exists: %s (%v)", path, err)
+				}
+			}
+			for _, path := range []string{filepath.Join(dataDir, "active.json"), filepath.Join(outputDir, "active.html")} {
+				if _, err := os.Stat(path); err != nil {
+					t.Error(err)
+				}
+			}
+			if err := removeArchivedRepoFiles(dataDir, outputDir, "archived"); err != nil {
+				t.Fatal(err)
+			}
+		})
 	}
 }
